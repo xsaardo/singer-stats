@@ -1,0 +1,9 @@
+node_modules/
+*.log
+.env
+.DS_Store
+
+# Ignore lyrics and data files
+lyrics_*.txt
+*_summary.txt
+Backstreet_*.json
