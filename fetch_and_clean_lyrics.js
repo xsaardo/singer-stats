@@ -1,6 +1,7 @@
 const https = require('https');
 const fs = require('fs');
 const zlib = require('zlib');
+const path = require('path');
 const cheerio = require('cheerio');
 const { parseLyricsWithVocalists } = require('./parse_lyrics');
 
@@ -170,7 +171,11 @@ async function fetchAndCleanLyrics(artist, songTitle, accessToken) {
     
     // Save cleaned content to file
     const filename = `lyrics_cleaned_${song.id}.txt`;
-    const filepath = `/Users/cuongluong/Desktop/backstreetdata/${filename}`;
+    const outputDir = path.join(process.cwd(), 'output');
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+    const filepath = path.join(outputDir, filename);
     
     fs.writeFileSync(filepath, finalContent, 'utf8');
     
@@ -182,7 +187,7 @@ async function fetchAndCleanLyrics(artist, songTitle, accessToken) {
     
     // Save annotated version
     const annotatedFilename = `lyrics_annotated_${song.id}.txt`;
-    const annotatedFilepath = `/Users/cuongluong/Desktop/backstreetdata/${annotatedFilename}`;
+    const annotatedFilepath = path.join(outputDir, annotatedFilename);
     
     const annotatedContent = parseResult.parsedLyrics
       .map(item => `${item.vocalist}: ${item.line}`)

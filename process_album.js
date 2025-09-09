@@ -1,6 +1,7 @@
 const { fetchAndCleanLyrics } = require('./fetch_and_clean_lyrics');
 const { searchAlbum, getAlbumTracklist, extractSongList } = require('./musicbrainz_demo');
 const fs = require('fs');
+const path = require('path');
 
 /**
  * Process an entire album by artist and album name
@@ -195,12 +196,18 @@ function saveAlbumResults(albumResult, artistName, albumName) {
   const safeAlbum = albumName.replace(/[^a-zA-Z0-9]/g, '_');
   const baseFilename = `${safeArtist}_${safeAlbum}_${timestamp}`;
   
+  // Ensure output directory exists
+  const outputDir = path.join(process.cwd(), 'output');
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+  
   // Save detailed JSON results
-  const jsonFile = `/Users/cuongluong/Desktop/backstreetdata/${baseFilename}.json`;
+  const jsonFile = path.join(outputDir, `${baseFilename}.json`);
   fs.writeFileSync(jsonFile, JSON.stringify(albumResult, null, 2), 'utf8');
   
   // Save human-readable summary
-  const summaryFile = `/Users/cuongluong/Desktop/backstreetdata/${baseFilename}_summary.txt`;
+  const summaryFile = path.join(outputDir, `${baseFilename}_summary.txt`);
   const summaryContent = formatAlbumSummary(albumResult);
   fs.writeFileSync(summaryFile, summaryContent, 'utf8');
   
